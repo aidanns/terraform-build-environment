@@ -8,11 +8,19 @@ provider "docker" {
 resource "docker_container" "gitlab" {
   image = "${docker_image.centos6.latest}"
   name = "gitlab"
+  hostname = "gitlab.local"
+  must_run = true
+
+  ports {
+    internal = 22
+    external = 2022
+  }
+
   # Ensures that the container doesn't exit.
   command = ["tail", "-f", "/dev/null"]
   
   provisioner "local-exec" {
-    command = "docker exec gitlab ./bootstrap_docker_container.sh"
+    command = "./bootstrap_docker_container.sh -c ${docker_container.gitlab.name}"
   }
 }
 
