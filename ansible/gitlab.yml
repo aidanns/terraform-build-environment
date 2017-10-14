@@ -1,0 +1,39 @@
+---
+# This playbook deploys the entire application stack.
+
+- hosts: gitlab
+  tasks:
+    - name: Configure Gitlab Yum repository
+      yum_repository:
+        name: gitlab-ce
+        description: Gitlab Community repo
+        file: gitlab_ce
+        baseurl: https://packages.gitlab.com/gitlab/gitlab-ce/el/6/$basearch
+        gpgcheck: yes
+        gpgkey:
+          - https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey
+          - https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey/gitlab-gitlab-ce-3D645A26AB9FBD22.pub.gpg
+        repo_gpgcheck: yes
+        metadata_expire: 300
+        sslverify: yes
+      notify: "yum repos changed"
+    - name: Configure Gitlab Source Yum repo
+      yum_repository:
+        name: gitlabe-ce-source
+        description: Gitlab Community Source repo
+        file: gitlab_ce
+        baseurl: https://packages.gitlab.com/gitlab/gitlab-ce/el/6/SRPMS
+        gpgcheck: yes
+        gpgkey:
+          - https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey
+          - https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey/gitlab-gitlab-ce-3D645A26AB9FBD22.pub.gpg
+        repo_gpgcheck: yes
+        metadata_expire: 300
+        sslverify: yes
+      notify: "yum repos changed"
+  handlers:
+    - name: yum-clean-metadata
+      command: yum clean metadata
+      args:
+        warn: no
+      listen: "yum repos changed"
