@@ -30,12 +30,6 @@ resource "docker_container" "gitlab" {
   # TODO(aidanns): Try using only capabilities here.
   privileged = true
 
-  volumes {
-    host_path = "/sys/fs/cgroup"
-    container_path = "/sys/fs/cgroup"
-    read_only = true
-  }
-
   # Start systemd inside the container.
   command = ["/sbin/init"]
   
