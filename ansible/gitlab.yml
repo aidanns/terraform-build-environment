@@ -31,9 +31,28 @@
         metadata_expire: 300
         sslverify: yes
       notify: "yum repos changed"
+    - name: Install Gitlab dependencies
+      yum:
+        name:
+          - policycoreutils-python
+          - cronie
+        state: latest
+    - name: Install Gitlab
+      yum:
+        name: gitlab-ce
+        state: latest
+      notify: "gitlab updated"
   handlers:
     - name: yum-clean-metadata
       command: yum clean metadata
       args:
         warn: no
       listen: "yum repos changed"
+    - name: gitlab-ctl-reconfigure
+      command: gitlab-ctl reconfigura
+      listen: "gitlab updated"
+
+
+# TODO(aidanns): Enable systemd on the container so that this installation works.
+# TODO(aidanns): Configure firewall.
+# TODO(aidannS): Put Gitlab behind Nginx.

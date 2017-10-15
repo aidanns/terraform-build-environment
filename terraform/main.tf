@@ -6,7 +6,7 @@ provider "docker" {
 
 # Create a container for Gitlab.
 resource "docker_container" "gitlab" {
-  image = "${docker_image.centos6.latest}"
+  image = "${docker_image.centos7.latest}"
   name = "gitlab"
   hostname = "gitlab.local"
   must_run = true
@@ -16,14 +16,54 @@ resource "docker_container" "gitlab" {
     external = 2022
   }
 
-  # Ensures that the container doesn't exit.
-  command = ["tail", "-f", "/dev/null"]
-  
-  provisioner "local-exec" {
-    command = "./bootstrap_docker_container.sh -c ${docker_container.gitlab.name}"
+  ports {
+    internal = 443
+    external = 2443
   }
+
+  ports {
+    internal = 80
+    external = 2080
+  }
+
+  # Needed so that we can start systemd in the container.
+  # TODO(aidanns): Try using only capabilities here.
+  privileged = true
+
+  env = [
+    "container=docker"
+  ]
+
+  volumes {
+    host_path = "/sys/fs/cgroup"
+    container_path = "/sys/fs/cgroup"
+    read_only = true
+  }
+
+  volumes {
+    host_path = "/tmp"
+    container_path = "/run"
+  }
+
+  volumes {
+    host_path = "/tmp"
+    container_path = "/run/lock"
+  }
+
+  volumes {
+    host_path = "/tmp"
+    container_path = "/tmp"
+  }
+
+  # Start systemd inside the container.
+  command = ["/sbin/init"]
+  
+#  provisioner "local-exec" {
+#    command = "./bootstrap_docker_container.sh -c ${docker_container.gitlab.name}"
+#  }
 }
 
-resource "docker_image" "centos6" {
-  name = "centos:centos6"
+resource "docker_image" "centos7" {
+  name = "centos:centos7"
+  keep_locally = true
 }

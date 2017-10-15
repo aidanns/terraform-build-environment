@@ -3,15 +3,31 @@
 cd /root
 
 # Ensure common utilities are available on the container.
-yum install -y wget vim
+yum -y update
+yum install -y epel-release
+yum install -y initscripts
+#yum install -y wget 
+#yum install -y vim
+yum clean all
 
-# Add the EPEL repository to Yum.
-wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-rpm -Uvh epel-release-6*.rpm
+# Allow systemd to run in the container.
+cd /lib/systemd/system/sysinit.target.wants/
+
+for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done
+
+rm -f /lib/systemd/system/multi-user.target.wants/*
+rm -f /etc/systemd/system/*.wants/*
+rm -f /lib/systemd/system/local-fs.target.wants/*
+rm -f /lib/systemd/system/sockets.target.wants/*udev*
+rm -f /lib/systemd/system/sockets.target.wants/*initctl*
+rm -f /lib/systemd/system/basic.target.wants/*
+rm -f /lib/systemd/system/anaconda.target.wants/*
+
+cd /root
 
 # Install and start the SSH server.
-yum install -y openssh-server
-/etc/init.d/sshd start
+#yum install -y openssh-server
+#systemctl start sshd.service
 
 # Allow key based authentication.
 mkdir /root/.ssh
