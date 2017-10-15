@@ -6,28 +6,13 @@ cd /root
 yum -y update
 yum install -y epel-release
 yum install -y initscripts
-#yum install -y wget 
-#yum install -y vim
+yum install -y wget 
+yum install -y vim
 yum clean all
 
-# Allow systemd to run in the container.
-cd /lib/systemd/system/sysinit.target.wants/
-
-for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done
-
-rm -f /lib/systemd/system/multi-user.target.wants/*
-rm -f /etc/systemd/system/*.wants/*
-rm -f /lib/systemd/system/local-fs.target.wants/*
-rm -f /lib/systemd/system/sockets.target.wants/*udev*
-rm -f /lib/systemd/system/sockets.target.wants/*initctl*
-rm -f /lib/systemd/system/basic.target.wants/*
-rm -f /lib/systemd/system/anaconda.target.wants/*
-
-cd /root
-
 # Install and start the SSH server.
-#yum install -y openssh-server
-#systemctl start sshd.service
+yum install -y openssh-server
+systemctl start sshd.service
 
 # Allow key based authentication.
 mkdir /root/.ssh

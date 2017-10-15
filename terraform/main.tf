@@ -33,9 +33,9 @@ resource "docker_container" "gitlab" {
   # Start systemd inside the container.
   command = ["/sbin/init"]
   
-#  provisioner "local-exec" {
-#    command = "./bootstrap_docker_container.sh -c ${docker_container.gitlab.name}"
-#  }
+  provisioner "local-exec" {
+    command = "./bootstrap_docker_container.sh -c ${docker_container.gitlab.name}"
+  }
 }
 
 resource "docker_image" "centos7" {
