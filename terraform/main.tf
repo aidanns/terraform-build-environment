@@ -36,21 +36,6 @@ resource "docker_container" "gitlab" {
     read_only = true
   }
 
-  volumes {
-    host_path = "/tmp"
-    container_path = "/run"
-  }
-
-  volumes {
-    host_path = "/tmp"
-    container_path = "/run/lock"
-  }
-
-  volumes {
-    host_path = "/tmp"
-    container_path = "/tmp"
-  }
-
   # Start systemd inside the container.
   command = ["/sbin/init"]
   
