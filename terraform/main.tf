@@ -30,10 +30,6 @@ resource "docker_container" "gitlab" {
   # TODO(aidanns): Try using only capabilities here.
   privileged = true
 
-  env = [
-    "container=docker"
-  ]
-
   volumes {
     host_path = "/sys/fs/cgroup"
     container_path = "/sys/fs/cgroup"
